@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>you da real art · cotton candy sunrise</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 10% 30%, #fff9f0, #ffe0f0, #d9f0ff);
+      background-attachment: fixed;
+      font-family: system-ui, 'Segoe UI', 'Nunito', -apple-system, sans-serif;
+      color: #3b2b3a;
+      padding: 0.8rem 1rem 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* === Background Effects (Hearts, Stars & Petals) === */
+    .floating-hearts, .floating-petals {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+
+    .floating-hearts i, .petal {
+      position: absolute;
+      display: inline-block;
+      pointer-events: none;
+    }
+
+    .floating-hearts i {
+      font-size: 1.6rem;
+      opacity: 0.3;
+      animation: floatHeart 14s infinite ease-in-out;
+      color: #ffb7cf;
+      text-shadow: 0 0 4px #fff0d6;
+    }
+
+    .petal {
+      background: radial-gradient(circle, #ffb7c5, #ff8aa8);
+      width: 12px;
+      height: 12px;
+      border-radius: 50% 0 50% 0;
+      transform: rotate(45deg);
+      opacity: 0.5;
+      animation: floatPetal 12s infinite linear;
+    }
+
+    @keyframes floatPetal {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.4; }
+      100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+    }
+
+    .shooting-star {
+      position: fixed; width: 3px; height: 3px;
+      background: #fff; border-radius: 50%;
+      box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8), 0 0 20px 4px rgba(255, 200, 255, 0.6);
+      pointer-events: none; z-index: 1; opacity: 0;
+    }
+
+    .shooting-star::after {
+      content: ''; position: absolute; top: 50%; transform: translateY(-50%);
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, #fff, transparent);
+    }
+
+    @keyframes floatHeart {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.55; }
+      85% { opacity: 0.5; }
+      100% { transform: translateY(-20vh) rotate(12deg); opacity: 0; }
+    }
+
+    @keyframes shootStar {
+      0% { transform: translate(0, 0) rotate(45deg) scale(0); opacity: 0; }
+      10% { transform: translate(-20vw, 20vh) rotate(45deg) scale(1); opacity: 1; }
+      20% { transform: translate(-40vw, 40vh) rotate(45deg) scale(0.5); opacity: 0; }
+      100% { transform: translate(-40vw, 40vh) rotate(45deg) scale(0); opacity: 0; }
+    }
+
+    /* Tap Sparkles */
+    .tap-sparkle {
+      position: fixed; pointer-events: none; z-index: 9999;
+      font-size: 1.2rem;
+      animation: sparkleBurst 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes sparkleBurst {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(90deg); opacity: 0; }
+    }
+
+    /* Cupid & Arrows */
+    .cupid-container {
+      position: fixed; top: 8%; right: 5%; z-index: 100; pointer-events: none;
+      font-size: 3rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+      animation: hoverCupid 4s infinite ease-in-out alternate;
+    }
+
+    .flying-arrow {
+      position: fixed; z-index: 99; pointer-events: none; font-size: 2rem;
+      filter: drop-shadow(0 2px 5px rgba(255, 100, 150, 0.4));
+      animation: shootArrow 1.5s cubic-bezier(0.4, 0, 1, 1) forwards;
+    }
+
+    @keyframes hoverCupid {
+      0% { transform: translateY(0) rotate(-5deg); }
+      100% { transform: translateY(-15px) rotate(5deg); }
+    }
+
+    @keyframes shootArrow {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(-80vw, 30vh) scale(0.5); }
+    }
+
+    /* Main Content */
+    .main-content {
+      position: relative; z-index: 2; max-width: 620px; margin: 0 auto;
+    }
+
+    /* Sun */
+    .sun-wrapper {
+      display: flex; justify-content: center; margin-bottom: 0.5rem;
+      animation: bounceGentle 3s infinite ease-in-out;
+    }
+    .sun {
+      width: 75px; height: 75px; background: radial-gradient(circle, #ffef9e, #ffd966);
+      border-radius: 50%; box-shadow: 0 0 20px #ffda88, 0 0 8px #ffe1aa;
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .sun-rays {
+      position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+      animation: spinRays 12s linear infinite;
+    }
+    .sun-rays::before, .sun-rays::after {
+      content: ""; position: absolute; background: #ffd966; border-radius: 40%; box-shadow: 0 0 6px #ffcd7e;
+    }
+    .sun-rays::before {
+      width: 110%; height: 110%; top: -5%; left: -5%;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      background: #ffe09d; opacity: 0.7;
+    }
+    @keyframes spinRays { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes bounceGentle { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+
+    /* Hero Text */
+    .hero { text-align: center; margin: 0.5rem 0 1rem; }
+    .hero h1 {
+      font-size: 2.9rem; font-weight: 900;
+      background: linear-gradient(135deg, #ffb347, #ff85a1, #70c8ff, #fdd47e);
+      background-clip: text; -webkit-background-clip: text; color: transparent;
+      text-shadow: 3px 3px 0 #ffe0f0, 6px 6px 0 #ffbfd5, 9px 9px 0 #b2d9ff, 12px 12px 15px rgba(0,0,0,0.1);
+      letter-spacing: -0.5px; animation: pulseGlow 2s infinite alternate;
+      line-height: 1.2; margin-bottom: 0.2rem;
+    }
+    @keyframes pulseGlow {
+      0% { text-shadow: 3px 3px 0 #ffe0f0, 6px 6px 0 #ffbfd5, 9px 9px 0 #b2d9ff; }
+      100% { text-shadow: 4px 4px 0 #ffd5e6, 8px 8px 0 #ffadca, 12px 12px 0 #90ceff; }
+    }
+    
+    .romantic-subtitle {
+      font-size: 1rem; font-weight: 700; background: rgba(255, 250, 210, 0.75);
+      backdrop-filter: blur(6px); display: inline-block; padding: 0.7rem 1.2rem;
+      border-radius: 60px; color: #b45f7c; max-width: 90%; margin-top: 0.3rem;
+      line-height: 1.4; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid rgba(255,220,160,0.8); font-style: italic;
+    }
+
+    /* Love Meter */
+    .love-meter {
+      background: rgba(255,245,235,0.8); border-radius: 60px; padding: 0.5rem 1rem;
+      margin: 0.5rem 0 1rem; text-align: center; backdrop-filter: blur(4px);
+    }
+    .meter-label { font-weight: 700; color: #c95c7a; margin-bottom: 0.3rem; font-size: 0.9rem; }
+    .meter-bar-bg {
+      background: #ffdbc8; border-radius: 30px; height: 18px; width: 100%;
+      overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .meter-fill {
+      width: 0%; height: 100%; background: linear-gradient(90deg, #ff98b9, #ff5e8e);
+      border-radius: 30px; transition: width 0.4s ease;
+    }
+
+    /* Game Cards */
+    .games-wrapper { display: flex; flex-direction: column; gap: 1.8rem; margin: 1.5rem 0; }
+    .game-card {
+      background: rgba(255, 252, 240, 0.85); backdrop-filter: blur(8px);
+      border-radius: 48px; padding: 1.3rem 1rem; box-shadow: 0 20px 30px rgba(100, 70, 80, 0.12);
+      border: 1px solid rgba(255, 225, 180, 0.9);
+    }
+    .game-title { font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; gap: 8px; justify-content: center; color: #c5688a; }
+    .score-area {
+      text-align: center; background: #ffefdb; display: inline-block; width: auto;
+      margin: 0 auto 1rem; padding: 0.4rem 1.2rem; border-radius: 50px;
+      font-size: 1.2rem; font-weight: 700; color: #c95c7a;
+    }
+    .heart-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 1rem 0; }
+    .heart-cell {
+      aspect-ratio: 1 / 1; background: #fffcf5; border-radius: 32px;
+      display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+      transition: all 0.2s ease; cursor: pointer; border: 2px solid #ffe0b5;
+    }
+    .heart-cell:active { transform: scale(0.94); }
+    .heart-active { background: #fff0e0; animation: bounceHeart 0.3s ease; border-color: #ffbc7a; }
+    @keyframes bounceHeart { 50% { transform: scale(1.08); text-shadow: 0 0 8px #ffaa77; } }
+
+    .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 1rem 0; }
+    .memory-card {
+      aspect-ratio: 1 / 1; background: linear-gradient(145deg, #fff5ec, #ffe6dc);
+      border-radius: 24px; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; cursor: pointer; transition: all 0.2s; border: 1px solid #ffd5b5;
+    }
+    .memory-card.flipped, .memory-card.matched {
+      background: #fffaf0; transform: scale(0.97); border: 2px solid #ffb789;
+    }
+    .memory-card.matched { opacity: 0.85; cursor: default; }
+
+    button {
+      background: linear-gradient(110deg, #ffe0a3, #ffcb96); border: none; font-weight: 800;
+      padding: 0.8rem 1.6rem; border-radius: 80px; font-size: 1.1rem; color: #633b4b;
+      margin-top: 0.5rem; cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    button:active { transform: scale(0.96); }
+    .message { text-align: center; margin-top: 0.8rem; font-size: 1rem; font-weight: 700; color: #dc8aa7; }
+
+    /* Hug Button & Floating Love Letter */
+    .extra-love {
+      display: flex; gap: 1rem; justify-content: center; margin: 1rem 0;
+    }
+    .hug-btn, .letter-btn {
+      background: linear-gradient(110deg, #ffb7cb, #ff9ebe);
+      padding: 0.6rem 1.2rem; font-size: 1rem; box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    }
+    .quote-box {
+      background: rgba(250, 245, 225, 0.85); border-radius: 48px; padding: 1.5rem;
+      text-align: center; backdrop-filter: blur(5px); border: 1px solid #ffdfb8; margin: 1rem 0;
+    }
+    .quote-text { font-size: 1.3rem; font-style: italic; font-weight: 600; color: #b25d7a; line-height: 1.4; }
+
+    /* Modal for Love Letter */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 10000;
+      justify-content: center; align-items: center;
+    }
+    .modal-content {
+      background: #fffef7; border-radius: 48px; padding: 1.8rem; max-width: 85%;
+      text-align: center; box-shadow: 0 25px 40px rgba(0,0,0,0.2); border: 2px solid #ffcfb0;
+      animation: gentlePop 0.3s ease;
+    }
+    @keyframes gentlePop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-content p { font-size: 1.2rem; margin: 1rem 0; color: #ad5a7a; }
+    .close-modal { background: #ffcfb0; padding: 0.5rem 1rem; margin-top: 0.8rem; }
+
+    footer { text-align: center; margin-top: 2rem; font-weight: 600; color: #c586a0; }
+
+    @media (max-width: 500px) {
+      .hero h1 { font-size: 2.4rem; }
+      .heart-cell { font-size: 2rem; }
+      .memory-card { font-size: 1.6rem; }
+      .cupid-container { font-size: 2.5rem; right: 2%; top: 5%; }
+    }
+
+    /* Side popping */
+    .side-pop {
+      position: fixed; z-index: 1000; pointer-events: none; font-weight: 500;
+      will-change: transform, opacity; text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    @keyframes popFromLeft {
+      0% { transform: translateX(0) rotate(0deg); opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { transform: translateX(calc(100vw + 80px)) rotate(360deg); opacity: 0; }
+    }
+    @keyframes popFromRight {
+      0% { transform: translateX(0) rotate(0deg); opacity: 0; }
+      15% { opacity: 1; }
+      100% { transform: translateX(calc(-100vw - 80px)) rotate(-360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="floating-hearts" id="floatingHearts"></div>
+<div class="floating-petals" id="petalsContainer"></div>
+<div class="cupid-container" id="cupid">👼🏹</div>
+
+<div class="main-content">
+  <div class="sun-wrapper"><div class="sun"><div class="sun-rays"></div></div></div>
+  <div class="hero">
+    <h1>✨ you da real art ✨</h1>
+    <div class="romantic-subtitle">
+      💘 from me to you fine shyt —<br>
+      a long shot of an arrow from you will not kill me<br>
+      but make me crave for more love from you 💘
+    </div>
+  </div>
+
+  <!-- Love Meter -->
+  <div class="love-meter">
+    <div class="meter-label">💗 Love Intensity Meter 💗</div>
+    <div class="meter-bar-bg"><div class="meter-fill" id="loveMeterFill"></div></div>
+  </div>
+
+  <div class="games-wrapper">
+    <div class="game-card">
+      <div class="game-title"><span>💛</span> Catch the Heart <span>💙</span></div>
+      <div style="text-align: center;"><div class="score-area">❤️ LOVE SCORE : <span id="heartScore">0</span> ❤️</div></div>
+      <div class="heart-grid" id="heartGrid"></div>
+      <button id="resetHeartBtn">✨ reset score ✨</button>
+      <div id="heartGameMsg" class="message">💘 tap the moving heart! 💘</div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-title"><span>🌸</span> Love Match Memory <span>🌞</span></div>
+      <div style="text-align: center;"><div class="score-area">📿 MOVES : <span id="movesCount">0</span></div></div>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <button id="resetMemoryBtn">💞 shuffle & new game 💞</button>
+      <div id="memoryGameMsg" class="message">🌷 match all the romance icons 🌷</div>
+    </div>
+  </div>
+
+  <!-- Extra Interactive Buttons -->
+  <div class="extra-love">
+    <button class="hug-btn" id="virtualHugBtn">🤗 send virtual hug 🤗</button>
+    <button class="letter-btn" id="loveLetterBtn">💌 open love letter 💌</button>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text" id="romanticQuote">💌 "The sun rays emit from your eyes, that's why I can't stop staring at them." 💌</div>
+    <button id="newLoveNoteBtn">💖 new love note 💖</button>
+  </div>
+  <footer>💕 you da real art • painted with sunshine & heartbeats 💕</footer>
+</div>
+
+<!-- Modal for Love Letter -->
+<div id="letterModal" class="modal">
+  <div class="modal-content">
+    <p>📜 <strong>My Dearest Fine Shyt,</strong> 📜</p>
+    <p>Every heartbeat is a love letter sent to you. Your arrows don't hurt — they make me dream bigger. You da real art, and my canvas is yours. 💘</p>
+    <button class="close-modal">close 💗</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ---- floating petals ----
+    function createPetals() {
+      const container = document.getElementById('petalsContainer');
+      for (let i = 0; i < 18; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        petal.style.left = Math.random() * 100 + '%';
+        petal.style.animationDuration = 8 + Math.random() * 10 + 's';
+        petal.style.animationDelay = Math.random() * 12 + 's';
+        petal.style.width = 10 + Math.random() * 8 + 'px';
+        petal.style.height = petal.style.width;
+        petal.style.opacity = 0.3 + Math.random() * 0.4;
+        container.appendChild(petal);
+      }
+    }
+    createPetals();
+
+    // ---- shooting stars & cupid arrows ----
+    function createShootingStar() {
+      const star = document.createElement('div');
+      star.className = 'shooting-star';
+      star.style.left = (Math.random() * 100 + 50) + 'vw';
+      star.style.top = (Math.random() * 50 - 20) + 'vh';
+      star.style.animation = 'shootStar ' + (Math.random() * 2 + 1) + 's ease-in forwards';
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 3000);
+    }
+    setInterval(createShootingStar, 3800);
+
+    function shootCupidArrow() {
+      const cupid = document.getElementById('cupid');
+      const rect = cupid.getBoundingClientRect();
+      const arrow = document.createElement('div');
+      arrow.className = 'flying-arrow';
+      arrow.innerHTML = '💘';
+      arrow.style.left = (rect.left - 20) + 'px';
+      arrow.style.top = (rect.top + 20) + 'px';
+      document.body.appendChild(arrow);
+      setTimeout(() => arrow.remove(), 1500);
+    }
+    setInterval(shootCupidArrow, 4200);
+
+    // ---- tap sparkles (mobile friendly) ----
+    document.addEventListener('pointerdown', (e) => {
+      for (let i = 0; i < 5; i++) {
+        let sparkle = document.createElement('div');
+        sparkle.innerHTML = ['✨', '💖', '⭐', '💗'][Math.floor(Math.random() * 4)];
+        sparkle.className = 'tap-sparkle';
+        sparkle.style.left = e.clientX + 'px';
+        sparkle.style.top = e.clientY + 'px';
+        sparkle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+        sparkle.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 600);
+      }
+    });
+
+    // ---- floating hearts bg ----
+    function createFloatingHearts() {
+      const container = document.getElementById('floatingHearts');
+      const symbols = ['❤️', '💖', '💗', '💛', '💙', '🌸', '🌻', '💘'];
+      for (let i = 0; i < 14; i++) {
+        const heart = document.createElement('i');
+        heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = 8 + Math.random() * 12 + 's';
+        heart.style.animationDelay = Math.random() * 12 + 's';
+        heart.style.fontSize = (0.8 + Math.random() * 1.3) + 'rem';
+        container.appendChild(heart);
+      }
+    }
+    createFloatingHearts();
+
+    // ========== LOVE METER (connected to heart score) ==========
+    let heartScore = 0;
+    const heartScoreSpan = document.getElementById('heartScore');
+    const loveMeterFill = document.getElementById('loveMeterFill');
+    function updateLoveMeter(score) {
+      let percent = Math.min(100, (score / 20) * 100); // 20 hearts = full meter
+      loveMeterFill.style.width = percent + '%';
+      if (percent >= 100) loveMeterFill.style.background = "linear-gradient(90deg, #ff69b4, #ff1493)";
+      else loveMeterFill.style.background = "linear-gradient(90deg, #ff98b9, #ff5e8e)";
+    }
+
+    // ========== GAME 1 : CATCH THE HEART ==========
+    const heartGrid = document.getElementById('heartGrid');
+    let heartCells = [], activeHeartIndex = 0;
+    const heartMsg = document.getElementById('heartGameMsg');
+    function updateHeartScoreUI() { heartScoreSpan.innerText = heartScore; updateLoveMeter(heartScore); }
+    function showHeartMessage(msg, good = true) {
+      heartMsg.innerHTML = good ? `💕 ${msg} 💕` : `🌸 ${msg} 🌸`;
+      setTimeout(() => { if (heartMsg.innerHTML.includes(msg)) heartMsg.innerHTML = '💘 tap the moving heart! 💘'; }, 1000);
+    }
+    function repositionHeart() {
+      if (heartCells[activeHeartIndex]) {
+        heartCells[activeHeartIndex].classList.remove('heart-active');
+        heartCells[activeHeartIndex].innerHTML = '🌼';
+      }
+      let newIndex = activeHeartIndex;
+      do { newIndex = Math.floor(Math.random() * heartCells.length); } while (heartCells.length > 1 && newIndex === activeHeartIndex);
+      activeHeartIndex = newIndex;
+      heartCells[activeHeartIndex].innerHTML = '❤️';
+      heartCells[activeHeartIndex].classList.add('heart-active');
+    }
+    function handleHeartClick(index) {
+      if (index === activeHeartIndex) {
+        heartScore++; updateHeartScoreUI();
+        showHeartMessage('+1 love point! you caught the sunshine heart 💗', true);
+        heartCells[index].style.transform = 'scale(0.9)';
+        setTimeout(() => { if(heartCells[index]) heartCells[index].style.transform = ''; }, 150);
+        repositionHeart();
+      } else {
+        showHeartMessage('almost! the heart moves like a sun ray ✨', false);
+        heartCells[index].style.transform = 'rotate(2deg)';
+        setTimeout(() => { if(heartCells[index]) heartCells[index].style.transform = ''; }, 150);
+      }
+    }
+    function buildHeartGame() {
+      heartGrid.innerHTML = ''; heartCells = [];
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'heart-cell'; cell.innerHTML = '🌼';
+        cell.addEventListener('pointerdown', (e) => { e.preventDefault(); handleHeartClick(i); });
+        heartGrid.appendChild(cell); heartCells.push(cell);
+      }
+      activeHeartIndex = Math.floor(Math.random() * 9);
+      heartCells[activeHeartIndex].innerHTML = '❤️';
+      heartCells[activeHeartIndex].classList.add('heart-active');
+    }
+    function resetHeartGame() { heartScore = 0; updateHeartScoreUI(); buildHeartGame(); showHeartMessage('score reset! new heart chase 💛', true); }
+
+    // ========== GAME 2 : MEMORY MATCH ==========
+    const memoryGrid = document.getElementById('memoryGrid'), movesSpan = document.getElementById('movesCount'), memoryMsg = document.getElementById('memoryGameMsg');
+    let cards = [], flippedCards = [], lockBoard = false, moves = 0, matchedPairs = 0;
+    const romanceIcons = ['💖', '🌹', '💌', '💕', '🕊️', '🎀', '💘', '🌟'];
+    function getShuffledCards() { return [...romanceIcons, ...romanceIcons].sort(() => Math.random() - 0.5); }
+    let currentCardValues = [];
+    function updateMovesUI() { movesSpan.innerText = moves; }
+    function checkGameComplete() {
+      if (matchedPairs === 8) memoryMsg.innerHTML = '🎉 PERFECT MATCH! You are the real art! 🎉 💗';
+      else memoryMsg.innerHTML = '🌷 keep matching — love finds its way 🌷';
+    }
+    function resetMemoryBoard() {
+      if (window._memoryTimeout) clearTimeout(window._memoryTimeout);
+      lockBoard = false; flippedCards = []; moves = 0; matchedPairs = 0; updateMovesUI();
+      memoryMsg.innerHTML = '🌷 match all the romance icons 🌷';
+      currentCardValues = getShuffledCards(); renderMemoryGrid();
+    }
+    function renderMemoryGrid() {
+      memoryGrid.innerHTML = ''; cards = [];
+      for (let i = 0; i < currentCardValues.length; i++) {
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('memory-card'); cardDiv.setAttribute('data-matched', 'false'); cardDiv.innerHTML = '🌸';
+        cardDiv.addEventListener('pointerdown', (e) => { e.preventDefault(); onCardClick(i); });
+        memoryGrid.appendChild(cardDiv); cards.push(cardDiv);
+      }
+    }
+    function onCardClick(idx) {
+      if (lockBoard) return;
+      const card = cards[idx];
+      if (card.getAttribute('data-matched') === 'true' || flippedCards.includes(idx)) return;
+      card.innerHTML = currentCardValues[idx]; card.classList.add('flipped'); flippedCards.push(idx);
+      if (flippedCards.length === 2) {
+        moves++; updateMovesUI();
+        const a = flippedCards[0], b = flippedCards[1];
+        if (currentCardValues[a] === currentCardValues[b]) {
+          cards[a].setAttribute('data-matched', 'true'); cards[b].setAttribute('data-matched', 'true');
+          cards[a].classList.add('matched'); cards[b].classList.add('matched');
+          matchedPairs++; checkGameComplete(); flippedCards = [];
+        } else {
+          lockBoard = true;
+          window._memoryTimeout = setTimeout(() => {
+            if (cards[a].getAttribute('data-matched') !== 'true') { cards[a].innerHTML = '🌸'; cards[a].classList.remove('flipped'); }
+            if (cards[b].getAttribute('data-matched') !== 'true') { cards[b].innerHTML = '🌸'; cards[b].classList.remove('flipped'); }
+            flippedCards = []; lockBoard = false;
+          }, 700);
+        }
+      }
+    }
+
+    // ========== QUOTE GENERATOR (with your special line) ==========
+    const loveQuotes = [
+      "The sun rays emit from your eyes, that's why I can't stop staring at them. ☀️",
+      "Are you made of stardust? Because you just made my whole universe brighter. ✨",
+      "Is your name Wi-Fi? Because I'm feeling a strong connection 💘.",
+      "You must be a developer, 'cause you've got my heart running in infinite loops. 💻",
+      "If beauty were a programming language, you'd be the most elegant syntax. 🌸",
+      "Every time you smile, another star appears in my sky. 🌟",
+      "You da real art – Picasso could never paint this feeling. 🎨",
+      "Are you a cotton candy sunrise? Because you're sweet and breathtaking. 🌅",
+      "I'd swim across the cloud sea just to bring you a sunbeam. ☁️",
+      "My heart just did a soft reset — only you can reboot it with love. 💖"
+    ];
+    const quoteEl = document.getElementById('romanticQuote');
+    document.getElementById('newLoveNoteBtn').addEventListener('pointerdown', () => {
+      quoteEl.innerHTML = `💌 "${loveQuotes[Math.floor(Math.random() * loveQuotes.length)]}" 💌`;
+      quoteEl.style.transform = 'scale(1.02)';
+      setTimeout(() => { quoteEl.style.transform = ''; }, 200);
+    });
+
+    // ========== VIRTUAL HUG ==========
+    document.getElementById('virtualHugBtn').addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const hugMsg = document.createElement('div');
+      hugMsg.innerText = '🤗❤️ You received a warm hug! ❤️🤗';
+      hugMsg.style.position = 'fixed'; hugMsg.style.bottom = '20%'; hugMsg.style.left = '50%';
+      hugMsg.style.transform = 'translateX(-50%)'; hugMsg.style.background = '#ffb7cb';
+      hugMsg.style.padding = '12px 24px'; hugMsg.style.borderRadius = '60px';
+      hugMsg.style.fontWeight = 'bold'; hugMsg.style.zIndex = '9999';
+      hugMsg.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+      hugMsg.style.backdropFilter = 'blur(8px)';
+      document.body.appendChild(hugMsg);
+      setTimeout(() => hugMsg.remove(), 2000);
+      // extra heart explosion
+      for(let i=0;i<8;i++) {
+        let heartBurst = document.createElement('div');
+        heartBurst.innerHTML = '💖';
+        heartBurst.style.position = 'fixed';
+        heartBurst.style.left = e.clientX + (Math.random() - 0.5)*50 + 'px';
+        heartBurst.style.top = e.clientY + (Math.random() - 0.5)*50 + 'px';
+        heartBurst.style.fontSize = '1.5rem';
+        heartBurst.style.pointerEvents = 'none';
+        heartBurst.style.zIndex = '9999';
+        heartBurst.style.animation = 'sparkleBurst 0.8s forwards';
+        document.body.appendChild(heartBurst);
+        setTimeout(() => heartBurst.remove(), 800);
+      }
+    });
+
+    // ========== LOVE LETTER MODAL ==========
+    const modal = document.getElementById('letterModal');
+    document.getElementById('loveLetterBtn').addEventListener('pointerdown', () => { modal.style.display = 'flex'; });
+    document.querySelector('.close-modal').addEventListener('pointerdown', () => { modal.style.display = 'none'; });
+    modal.addEventListener('click', (e) => { if(e.target === modal) modal.style.display = 'none'; });
+
+    // ========== SIDE POPPING EMOJIS (cute) ==========
+    function createSidePop() {
+      const emojis = ['🌸', '🌻', '💖', '💙', '💛', '🍫', '💝', '⭐', '✨', '🌞', '💗', '🌼', '💌'];
+      const isLeft = Math.random() < 0.5;
+      const pop = document.createElement('div');
+      pop.className = 'side-pop';
+      pop.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      pop.style.fontSize = (1.6 + Math.random() * 1.6) + 'rem';
+      pop.style.top = (Math.random() * 70 + 15) + '%';
+      if (isLeft) { pop.style.left = '-30px'; pop.style.animation = 'popFromLeft 3.2s forwards'; }
+      else { pop.style.right = '-30px'; pop.style.animation = 'popFromRight 3.2s forwards'; }
+      document.body.appendChild(pop);
+      setTimeout(() => pop.remove(), 3200);
+    }
+    setInterval(createSidePop, 2100);
+
+    // ========== INIT ==========
+    buildHeartGame(); resetMemoryBoard();
+    document.getElementById('resetHeartBtn').addEventListener('pointerdown', (e) => { e.preventDefault(); resetHeartGame(); });
+    document.getElementById('resetMemoryBtn').addEventListener('pointerdown', (e) => { e.preventDefault(); resetMemoryBoard(); memoryMsg.innerHTML = '🔄 new game! romance awaits 💗'; setTimeout(() => { if(memoryMsg.innerHTML.includes('new game')) memoryMsg.innerHTML = '🌷 match all the romance icons 🌷'; }, 1500); });
+    updateLoveMeter(0);
+  })();
+</script>
+</body>
+</html>
